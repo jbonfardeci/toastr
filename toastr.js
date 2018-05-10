@@ -12,7 +12,7 @@
 */
 /* global define */
 
-define(['jquery'], function($){
+(function($){
     
     var $container;
     var listener;
@@ -464,4 +464,4 @@ define(['jquery'], function($){
             previousToast = undefined;
         }
     }
-});
+})(jQuery);
