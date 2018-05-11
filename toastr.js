@@ -10,10 +10,13 @@
 *
 * Project: https://github.com/CodeSeven/toastr
 */
-/* global define */
+if (typeof jQuery === 'undefined') {
+    throw new Error('Toastr requires jQuery');
+}
 
 (function($){
-    
+    'use strict';
+
     var $container;
     var listener;
     var toastId = 0;
@@ -33,13 +36,11 @@
         options: {},
         subscribe: subscribe,
         success: success,
-        version: '2.1.5',
+        version: '2.1.7',
         warning: warning
     };
 
     var previousToast;
-
-    return toastr;
 
     ////////////////
 
@@ -51,7 +52,7 @@
             optionsOverride: optionsOverride,
             title: title
         });
-    }
+    };
 
     function getContainer(options, create) {
         if (!options) { options = getOptions(); }
@@ -63,7 +64,7 @@
             $container = createContainer(options);
         }
         return $container;
-    }
+    };
 
     function info(message, title, optionsOverride) {
         return notify({
@@ -73,11 +74,11 @@
             optionsOverride: optionsOverride,
             title: title
         });
-    }
+    };
 
     function subscribe(callback) {
         listener = callback;
-    }
+    };
 
     function success(message, title, optionsOverride) {
         return notify({
@@ -87,7 +88,7 @@
             optionsOverride: optionsOverride,
             title: title
         });
-    }
+    };
 
     function warning(message, title, optionsOverride) {
         return notify({
@@ -97,7 +98,7 @@
             optionsOverride: optionsOverride,
             title: title
         });
-    }
+    };
 
     function clear($toastElement, clearOptions) {
         var options = getOptions();
@@ -105,7 +106,7 @@
         if (!clearToast($toastElement, options, clearOptions)) {
             clearContainer(options);
         }
-    }
+    };
 
     function remove($toastElement) {
         var options = getOptions();
@@ -117,7 +118,7 @@
         if ($container.children().length) {
             $container.remove();
         }
-    }
+    };
 
     // internal functions
 
@@ -126,7 +127,7 @@
         for (var i = toastsToClear.length - 1; i >= 0; i--) {
             clearToast($(toastsToClear[i]), options);
         }
-    }
+    };
 
     function clearToast ($toastElement, options, clearOptions) {
         var force = clearOptions && clearOptions.force ? clearOptions.force : false;
@@ -139,7 +140,7 @@
             return true;
         }
         return false;
-    }
+    };
 
     function createContainer(options) {
         $container = $('<div/>')
@@ -148,7 +149,7 @@
 
         $container.appendTo($(options.target));
         return $container;
-    }
+    };
 
     function getDefaults() {
         return {
@@ -192,12 +193,12 @@
             progressClass: 'toast-progress',
             rtl: false
         };
-    }
+    };
 
     function publish(args) {
         if (!listener) { return; }
         listener(args);
-    }
+    };
 
     function notify(map) {
         var options = getOptions();
@@ -258,7 +259,7 @@
                 .replace(/'/g, '&#39;')
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;');
-        }
+        };
 
         function personalizeToast() {
             setIcon();
@@ -269,7 +270,7 @@
             setRTL();
             setSequence();
             setAria();
-        }
+        };
 
         function setAria() {
             var ariaValue = '';
@@ -282,7 +283,7 @@
                     ariaValue = 'assertive';
             }
             $toastElement.attr('aria-live', ariaValue);
-        }
+        };
 
         function handleEvents() {
             if (options.closeOnHover) {
@@ -315,7 +316,7 @@
                     hideToast();
                 });
             }
-        }
+        };
 
         function displayToast() {
             $toastElement.hide();
@@ -332,13 +333,13 @@
                     progressBar.intervalId = setInterval(updateProgress, 10);
                 }
             }
-        }
+        };
 
         function setIcon() {
             if (map.iconClass) {
                 $toastElement.addClass(options.toastClass).addClass(iconClass);
             }
-        }
+        };
 
         function setSequence() {
             if (options.newestOnTop) {
@@ -346,7 +347,7 @@
             } else {
                 $container.append($toastElement);
             }
-        }
+        };
 
         function setTitle() {
             if (map.title) {
@@ -357,7 +358,7 @@
                 $titleElement.append(suffix).addClass(options.titleClass);
                 $toastElement.append($titleElement);
             }
-        }
+        };
 
         function setMessage() {
             if (map.message) {
@@ -368,27 +369,27 @@
                 $messageElement.append(suffix).addClass(options.messageClass);
                 $toastElement.append($messageElement);
             }
-        }
+        };
 
         function setCloseButton() {
             if (options.closeButton) {
                 $closeElement.addClass(options.closeClass).attr('role', 'button');
                 $toastElement.prepend($closeElement);
             }
-        }
+        };
 
         function setProgressBar() {
             if (options.progressBar) {
                 $progressElement.addClass(options.progressClass);
                 $toastElement.prepend($progressElement);
             }
-        }
+        };
 
         function setRTL() {
             if (options.rtl) {
                 $toastElement.addClass('rtl');
             }
-        }
+        };
 
         function shouldExit(options, map) {
             if (options.preventDuplicates) {
@@ -399,7 +400,7 @@
                 }
             }
             return false;
-        }
+        };
 
         function hideToast(override) {
             var method = override && options.closeMethod !== false ? options.closeMethod : options.hideMethod;
@@ -424,7 +425,7 @@
                     publish(response);
                 }
             });
-        }
+        };
 
         function delayedHideToast() {
             if (options.timeOut > 0 || options.extendedTimeOut > 0) {
@@ -432,7 +433,7 @@
                 progressBar.maxHideTime = parseFloat(options.extendedTimeOut);
                 progressBar.hideEta = new Date().getTime() + progressBar.maxHideTime;
             }
-        }
+        };
 
         function stickAround() {
             clearTimeout(intervalId);
@@ -440,17 +441,17 @@
             $toastElement.stop(true, true)[options.showMethod](
                 {duration: options.showDuration, easing: options.showEasing}
             );
-        }
+        };
 
         function updateProgress() {
             var percentage = ((progressBar.hideEta - (new Date().getTime())) / progressBar.maxHideTime) * 100;
             $progressElement.width(percentage + '%');
-        }
-    }
+        };
+    };
 
     function getOptions() {
         return $.extend({}, getDefaults(), toastr.options);
-    }
+    };
 
     function removeToast($toastElement) {
         if (!$container) { $container = getContainer(); }
@@ -463,5 +464,9 @@
             $container.remove();
             previousToast = undefined;
         }
-    }
+    };
+
+    window.toastr = toastr;
+    return toastr;
+
 })(jQuery);
